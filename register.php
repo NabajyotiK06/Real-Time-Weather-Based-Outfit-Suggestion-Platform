@@ -5,6 +5,18 @@ if(isset($_POST['signUp'])) {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
+    // Validate username (alphanumeric only)
+    if (!ctype_alnum($username)) {
+        echo "<script>alert('Username must contain only letters and numbers'); history.back();</script>";
+        exit();
+    }
+
+    // Validate password length
+    if (strlen($password) < 8) {
+        echo "Password must be at least 8 characters long";
+        exit();
+    }
+
     // Hash the password
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
     $check_email = "SELECT * FROM users WHERE email='$email'";
@@ -16,7 +28,7 @@ if(isset($_POST['signUp'])) {
         // Insert the new user into the database
         $sql = "INSERT INTO users (username, email, password) VALUES ('$username', '$email', '$hashed_password')";
         if($conn->query($sql) === TRUE) {
-            header("Location: login.php");
+            echo "<script>alert('Sign up successful!'); window.location.href='login.php';</script>";
         } else {
             echo "Error: " . $conn->error;
         }
